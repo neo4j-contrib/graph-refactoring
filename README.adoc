@@ -1,4 +1,4 @@
-= Neo4j Procedure for Graph Refactorings
+= Neo4j Procedures for Graph Refactorings
 
 [Note]
 This project requires a Neo4j 3.0.0 snapshot or milestone dependency.
@@ -9,10 +9,12 @@ These procedures offer common graph refactorings
 
 * √ clone node
 * √ merge nodes by label + property + value
+* √ redirect relationship
+* √ change relationship-type
 * merge nodes by label + property
 * merge relationships
-* redirect relationship
-* change relationship-type
+* extract node from relationship
+* collapse node to relationship
 
 == Building
 
@@ -21,7 +23,7 @@ project, simply package the project with maven:
 
     mvn clean package
 
-This will produce a jar-file,`target/procedure-refactoring-1.0.0-SNAPSHOT.jar`,
+This will produce a jar-file,`target/graph-refactoring-1.0.0-SNAPSHOT.jar`,
 that can be deployed in the `plugin` directory of your Neo4j instance.
 
 == License
