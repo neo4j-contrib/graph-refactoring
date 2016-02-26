@@ -1,7 +1,9 @@
 package refactor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.neo4j.graphdb.*;
@@ -111,6 +113,21 @@ public class GraphRefactoring {
         } catch (Exception e) {
             return Stream.of(result.withError(e));
         }
+    }
+
+    @Procedure
+    @PerformsWrites
+    public Stream<Result> switchNodes(@Name("relId") long relId) {
+        Relationship rel = db.getRelationshipById(relId);
+        Node start = rel.getStartNode();
+        Node end = rel.getEndNode();
+        Relationship newRel = end.createRelationshipTo(start, RelationshipType.withName(rel.getType().toString()));
+        copyProperties(rel, newRel);
+        rel.delete();
+        Result result = new Result(relId);
+        result.withOther(newRel.getId());
+
+        return Stream.of(result);
     }
 
     private Node mergeNodes(Node source, Node target, boolean delete) {
