@@ -11,6 +11,7 @@ These procedures offer common graph refactorings
 * √ merge nodes by label + property + value
 * √ redirect relationship
 * √ change relationship-type
+* √ switch nodes on a relationship (useful for re-ordering linked lists)
 * merge nodes by label + property
 * merge relationships
 * extract node from relationship
