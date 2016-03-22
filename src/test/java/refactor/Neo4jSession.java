@@ -3,13 +3,11 @@ package refactor;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.types.TypeSystem;
 import org.neo4j.harness.ServerControls;
 import org.neo4j.harness.TestServerBuilder;
 
 import java.util.Map;
-
-import static org.neo4j.bolt.BoltKernelExtension.Settings.connector;
-import static org.neo4j.bolt.BoltKernelExtension.Settings.enabled;
 
 public class Neo4jSession implements TestRule, Session {
     private final TestServerBuilder builder;
@@ -24,10 +22,10 @@ public class Neo4jSession implements TestRule, Session {
         return new org.junit.runners.model.Statement() {
             @Override
             public void evaluate() throws Throwable {
-                try (ServerControls sc = builder.withConfig(connector(0, enabled), "true").newServer();
-                     Driver driver = GraphDatabase.driver(sc.boltURI());
+                try (ServerControls sc = builder.newServer();
+                     Driver driver = GraphDatabase.driver(sc.boltURI(), Config.build().withEncryptionLevel( Config.EncryptionLevel.NONE ).toConfig());
                      Session s = session = driver.session()) {
-                    statement.evaluate();
+                     statement.evaluate();
                 }
             }
         };
@@ -49,22 +47,31 @@ public class Neo4jSession implements TestRule, Session {
     }
 
     @Override
-    public ResultCursor run(String s, Map<String, Value> map) {
+    public StatementResult run(String s, Value value) {
+        return session.run(s, value);
+    }
+
+    @Override
+    public StatementResult run(String s, Map<String, Object> map) {
         return session.run(s, map);
     }
 
     @Override
-    public ResultCursor run(String s) {
+    public StatementResult run(String s, Record record) {
+        return session.run(s, record);
+    }
+
+    @Override
+    public StatementResult run(String s) {
         return session.run(s);
     }
 
     @Override
-    public ResultCursor run(Statement statement) {
+    public StatementResult run(Statement statement) {
         return session.run(statement);
     }
 
     @Override
-    @Experimental
     public TypeSystem typeSystem() {
         return session.typeSystem();
     }

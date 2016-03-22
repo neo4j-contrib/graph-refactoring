@@ -2,8 +2,7 @@ package refactor;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.ResultCursor;
+import org.neo4j.driver.v1.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -20,7 +19,7 @@ public class GraphRefactoringTest {
         long nodeId = session.run("CREATE (p:User {name:'Brookreson'}) RETURN id(p)")
                 .single().get(0).asLong();
 
-        ResultCursor refactored = session.run("CALL refactor.cloneNodes([{id}], true)", parameters("id", nodeId));
+        StatementResult refactored = session.run("CALL refactor.cloneNodes([{id}], true)", parameters("id", nodeId));
         Record record = refactored.single();
         long source = record.get("source").asLong();
         long target = record.get("target").asLong();
